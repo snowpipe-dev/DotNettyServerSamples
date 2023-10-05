@@ -4,12 +4,15 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 
-namespace Chat.Client;
+namespace Othello.Client;
 
 class Program
 {
     static async Task RunClientAsync()
     {
+        Console.WriteLine("Please enter your name: ");
+        string? clientName = Console.ReadLine();
+
         var group = new MultithreadEventLoopGroup();
 
         var serverIP = IPAddress.Parse("127.0.0.1");
@@ -27,20 +30,16 @@ class Program
                         var pipeline = channel.Pipeline;
                         pipeline.AddLast(new StringDecoder());
                         pipeline.AddLast(new StringEncoder());
-                        pipeline.AddLast(new ChatClientHandler());
+                        pipeline.AddLast(new OthelloClientHandler());
                     }));
 
             var bootstrapChannel = await bootstrap.ConnectAsync(serverIP, serverPort);
-
-            Console.WriteLine("Please enter your name: ");
-            string? clientName = Console.ReadLine();
-            Console.WriteLine($"Welcome {clientName}");
-            await bootstrapChannel.WriteAndFlushAsync($"[{clientName}] entered");
+            await bootstrapChannel.WriteAndFlushAsync($"Join::{clientName}");
 
             for (; ; )
             {
                 string? message = Console.ReadLine();
-                await bootstrapChannel.WriteAndFlushAsync($"[{clientName}] {message}");
+                await bootstrapChannel.WriteAndFlushAsync(message);
                 bootstrapChannel.Flush();
             }
         }
