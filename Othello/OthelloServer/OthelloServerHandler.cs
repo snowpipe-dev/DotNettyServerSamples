@@ -28,7 +28,7 @@ public class Coord
         X = x;
     }
 
-    public static Coord operator +(Coord a, Coord b) => new(a.Y + b.Y, a.X + b.X);
+    static public Coord operator +(Coord a, Coord b) => new(a.Y + b.Y, a.X + b.X);
 
     public override int GetHashCode()
     {
