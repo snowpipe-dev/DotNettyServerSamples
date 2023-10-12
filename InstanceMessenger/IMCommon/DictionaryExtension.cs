@@ -1,8 +1,8 @@
 ﻿namespace IMCommon;
 
-static public class DictionaryExtension
+public static class DictionaryExtension
 {
-    static public void Append<K, V>(this Dictionary<K, V> source, Dictionary<K, V> target)
+    public static void Append<K, V>(this Dictionary<K, V> source, Dictionary<K, V> target)
     {
         foreach(var item in target)
         {

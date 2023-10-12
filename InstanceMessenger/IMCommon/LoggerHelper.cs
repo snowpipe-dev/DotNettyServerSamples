@@ -5,12 +5,12 @@ namespace IMCommon;
 
 public class LoggerHelper
 {
-    static public void SetConsole()
+    public static void SetConsole()
     {
         InternalLoggerFactory.DefaultFactory.AddProvider(new ConsoleLoggerProvider((s, level) => true, false));
     }
 
-    static public IInternalLogger GetLogger<T>()
+    public static IInternalLogger GetLogger<T>()
     {
         return InternalLoggerFactory.GetInstance<T>();
     }

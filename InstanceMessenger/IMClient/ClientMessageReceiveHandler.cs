@@ -7,7 +7,7 @@ namespace IMClient;
 
 public class ClientMessageReceiveHandler : SimpleChannelInboundHandler<StringMessage>
 {
-    static private readonly IInternalLogger s_logger = LoggerHelper.GetLogger<ClientMessageReceiveHandler>();
+    private static readonly IInternalLogger s_logger = LoggerHelper.GetLogger<ClientMessageReceiveHandler>();
     private ClientMessageProcessor _clientMessageProcessor = new();
 
     public override void ChannelInactive(IChannelHandlerContext context)

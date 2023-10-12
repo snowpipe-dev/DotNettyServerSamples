@@ -5,7 +5,7 @@ namespace IMClient;
 
 public class ClientConsoleInput
 {
-    static public ClientConsoleInput INSTANCE = new();
+    public static ClientConsoleInput INSTANCE = new();
     public bool IsInitialized { get; private set; }
 
     private IChannel _channel;

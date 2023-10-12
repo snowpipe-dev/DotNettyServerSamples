@@ -14,7 +14,7 @@ public enum E_STAGE
 
 public class RequestDecoder : ByteToMessageDecoder
 {
-    static private readonly IInternalLogger s_logger = LoggerHelper.GetLogger<RequestDecoder>();
+    private static readonly IInternalLogger s_logger = LoggerHelper.GetLogger<RequestDecoder>();
 
     private E_STAGE _stage = E_STAGE.HEADER;
     private StringMessage? _requestEntity;

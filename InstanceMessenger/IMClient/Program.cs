@@ -10,7 +10,7 @@ namespace IMClient;
 
 class Program
 {
-    static public bool s_runnerable = true;
+    public static bool s_runnerable = true;
 
     static async Task RunClientAsync(string id, string name)
     {

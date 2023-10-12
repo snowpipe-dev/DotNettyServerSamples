@@ -10,7 +10,7 @@ namespace Othello.Server;
 
 class Program
 {
-    static private async Task RunServerAsync()
+    private static async Task RunServerAsync()
     {
         var logLevel = LogLevel.INFO;
         InternalLoggerFactory.DefaultFactory.AddProvider(new ConsoleLoggerProvider((s, level) => true, false));

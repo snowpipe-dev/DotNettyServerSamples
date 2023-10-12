@@ -7,11 +7,11 @@ namespace IMCommon;
 
 public class ByteBufferHelper
 {
-    static private IInternalLogger s_logger = LoggerHelper.GetLogger<ByteBufferHelper>();
-    static public readonly byte CR;
-    static public readonly byte LF;
-    static public readonly byte[] CRLF;
-    static public readonly string STR_CRLF;
+    private static IInternalLogger s_logger = LoggerHelper.GetLogger<ByteBufferHelper>();
+    public static readonly byte CR;
+    public static readonly byte LF;
+    public static readonly byte[] CRLF;
+    public static readonly string STR_CRLF;
 
     static ByteBufferHelper()
     {
@@ -21,7 +21,7 @@ public class ByteBufferHelper
         STR_CRLF = Encoding.UTF8.GetString(CRLF);
     }
 
-    static public string GetLine(IByteBuffer input)
+    public static string GetLine(IByteBuffer input)
     {
         var posLF = input.ForEachByte(ByteProcessor.FindLF);
         if (posLF < 0)

@@ -34,12 +34,12 @@ public class LoginUserInfo
         return Id;
     }
 
-    static public LoginUserInfo Create(IChannelHandlerContext ctx)
+    public static LoginUserInfo Create(IChannelHandlerContext ctx)
     {
         return ChannelHelper.Create(ctx).LoginUserInfo;
     }
 
-    static public LoginUserInfo Create(IChannel channel)
+    public static LoginUserInfo Create(IChannel channel)
     {
         return ChannelHelper.Create(channel).LoginUserInfo;
     }

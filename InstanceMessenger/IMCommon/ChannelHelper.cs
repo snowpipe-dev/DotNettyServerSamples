@@ -5,7 +5,7 @@ namespace IMCommon;
 
 public class ChannelHelper
 {
-    static private readonly string USER_INFO = "userInfo";
+    private static readonly string USER_INFO = "userInfo";
 
     private IChannel _channel;
 
@@ -41,12 +41,12 @@ public class ChannelHelper
         return (LoginUserInfo)Get(USER_INFO);
     }
 
-    static public ChannelHelper Create(IChannel channel)
+    public static ChannelHelper Create(IChannel channel)
     {
         return new ChannelHelper(channel);
     }
 
-    static public ChannelHelper Create(IChannelHandlerContext ctx)
+    public static ChannelHelper Create(IChannelHandlerContext ctx)
     {
         return new ChannelHelper(ctx.Channel);
     }

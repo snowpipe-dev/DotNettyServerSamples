@@ -19,7 +19,7 @@ public enum E_ACTION
 
 public abstract class BaseRequestEntity<T> where T : class
 {
-    static public E_ACTION Decode(string code)
+    public static E_ACTION Decode(string code)
     {
         return Enum.Parse<E_ACTION>(code);
     }

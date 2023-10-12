@@ -8,7 +8,7 @@ namespace IMServer;
 
 public class ServerLoginProcessHandler : SimpleChannelInboundHandler<StringMessage>
 {
-    static private readonly IInternalLogger s_logger = LoggerHelper.GetLogger<ServerLoginProcessHandler>();
+    private static readonly IInternalLogger s_logger = LoggerHelper.GetLogger<ServerLoginProcessHandler>();
 
     protected override async void ChannelRead0(IChannelHandlerContext ctx, StringMessage message)
     {
@@ -28,7 +28,7 @@ public class ServerLoginProcessHandler : SimpleChannelInboundHandler<StringMessa
             new ExceptionSender(ctx).Send("id가 비었습니다.", true);
         }
 
-        if (ClientChannelHolder.INSTANCE.ExistsId(id!))
+        if (RoomManager.INSTANCE.ExistsId(id!))
         {
             new ExceptionSender(ctx).Send($"해당하는 id가 이미 로그인한 사용자가 있습니다. ({id})", true);
         }
@@ -48,12 +48,12 @@ public class ServerLoginProcessHandler : SimpleChannelInboundHandler<StringMessa
         s_logger.Info($"로그인 함 {loginInfo.Desc()} [{host}] [{port}]");
         ChannelHelper.Create(ctx).AttachLoginUserInfo(loginInfo);
 
-        ClientChannelHolder.INSTANCE.Login(ctx.Channel);
+        RoomManager.INSTANCE.Login(ctx.Channel);
         //로그인후에는 이 핸들러 삭제
         ctx.Channel.Pipeline.Remove(this);
 
         // 방 목록을 보내주기
-        var roomList = ClientChannelHolder.INSTANCE.RoomList;
+        var roomList = RoomManager.INSTANCE.RoomList;
         var roomListJson = JsonSerializer.Serialize(roomList);
 
         var response = new StringMessage.Builder()

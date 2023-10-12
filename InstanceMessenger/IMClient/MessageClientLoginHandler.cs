@@ -6,7 +6,7 @@ namespace IMClient;
 
 public class MessageClientLoginHandler : ChannelHandlerAdapter
 {
-    static private readonly IInternalLogger s_logger = LoggerHelper.GetLogger<MessageClientLoginHandler>();
+    private static readonly IInternalLogger s_logger = LoggerHelper.GetLogger<MessageClientLoginHandler>();
     private readonly LoginRequest _loginRequest;
 
     public MessageClientLoginHandler(LoginRequest loginRequest)

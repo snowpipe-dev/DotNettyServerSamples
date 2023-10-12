@@ -9,7 +9,7 @@ namespace IMServer;
 
 class Program
 {
-    static private async Task RunServerAsync()
+    private static async Task RunServerAsync()
     {
         LoggerHelper.SetConsole();
         

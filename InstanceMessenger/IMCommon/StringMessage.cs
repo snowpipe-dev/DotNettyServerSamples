@@ -14,7 +14,7 @@ public struct Message
 
 public class StringMessage : BaseRequestEntity<StringMessage>
 {
-    static private readonly IInternalLogger s_logger = LoggerHelper.GetLogger<StringMessage>();
+    private static readonly IInternalLogger s_logger = LoggerHelper.GetLogger<StringMessage>();
     public string Contents { get; private set; } = string.Empty;
 
     public StringMessage() : base() { }

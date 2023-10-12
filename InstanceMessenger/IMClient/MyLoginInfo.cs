@@ -4,7 +4,7 @@ namespace IMClient;
 
 public class MyLoginInfo
 {
-    static public readonly MyLoginInfo INSTANCE = new();
+    public static readonly MyLoginInfo INSTANCE = new();
 
     public string Id { get; set; }
     public string Name { get; set; }

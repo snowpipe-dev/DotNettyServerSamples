@@ -8,7 +8,7 @@ namespace IMServer;
 
 public class MessageServerInitializer : ChannelInitializer<ISocketChannel>
 {
-    static private readonly IInternalLogger s_logger = LoggerHelper.GetLogger<MessageServerInitializer>();
+    private static readonly IInternalLogger s_logger = LoggerHelper.GetLogger<MessageServerInitializer>();
 
     protected override void InitChannel(ISocketChannel channel)
     {

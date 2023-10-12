@@ -7,7 +7,7 @@ namespace IMServer;
 
 public class MessageServerReceiveHandler : SimpleChannelInboundHandler<StringMessage>
 {
-    static private readonly IInternalLogger s_logger = LoggerHelper.GetLogger<MessageServerReceiveHandler>();
+    private static readonly IInternalLogger s_logger = LoggerHelper.GetLogger<MessageServerReceiveHandler>();
 
     protected override async void ChannelRead0(IChannelHandlerContext ctx, StringMessage message)
     {
@@ -23,7 +23,7 @@ public class MessageServerReceiveHandler : SimpleChannelInboundHandler<StringMes
 
             case E_ACTION.TALK_MESSAGE:
                 s_logger.Info($"[talk]{message.Contents} From {ChannelHelper.Create(ctx).GetLoginUserInfo().Name}");
-                ClientChannelHolder.INSTANCE.TalkInTheRoom(ctx.Channel, message.Contents);
+                RoomManager.INSTANCE.TalkInTheRoom(ctx.Channel, message.Contents);
                 break;
 
             case E_ACTION.LOGOUT:
@@ -46,12 +46,12 @@ public class MessageServerReceiveHandler : SimpleChannelInboundHandler<StringMes
 
     private async void LogOut(IChannelHandlerContext ctx)
     {
-        ClientChannelHolder.INSTANCE.Logout(ctx.Channel);
+        RoomManager.INSTANCE.Logout(ctx.Channel);
     }
 
     private async void SendRoomList(IChannelHandlerContext ctx)
     {
-        var roomList = ClientChannelHolder.INSTANCE.RoomList;
+        var roomList = RoomManager.INSTANCE.RoomList;
         var jsonStr = JsonSerializer.Serialize(roomList);
 
         var response = new StringMessage.Builder(ctx)
@@ -71,18 +71,18 @@ public class MessageServerReceiveHandler : SimpleChannelInboundHandler<StringMes
             return;
         }
 
-        ClientChannelHolder.INSTANCE.EnterToRoom(roomName, ctx.Channel);
+        RoomManager.INSTANCE.EnterToRoom(roomName, ctx.Channel);
     }
 
     private void ExitFromRoom(IChannelHandlerContext ctx, StringMessage msg)
     {
-        ClientChannelHolder.INSTANCE.ExitFromRoom(ctx.Channel);
+        RoomManager.INSTANCE.ExitFromRoom(ctx.Channel);
     }
 
     private async void SendUserList(IChannelHandlerContext ctx, StringMessage msg)
     {
         // 방 사람들 목록 보내주기
-        var idList = ClientChannelHolder.INSTANCE.GetIdList(ctx.Channel);
+        var idList = RoomManager.INSTANCE.GetIdList(ctx.Channel);
         s_logger.Info($"SendUserList/IdList:{idList.Count}");
         var jsonStr = JsonSerializer.Serialize(idList);
 

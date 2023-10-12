@@ -9,8 +9,8 @@ namespace IMClient;
 
 public class MessageClientInitializer : ChannelInitializer<ISocketChannel>
 {
-    static private readonly IInternalLogger s_logger = LoggerHelper.GetLogger<MessageClientInitializer>();
-    static private MessageEntityEncoder s_messageEntityEncoder = new();
+    private static readonly IInternalLogger s_logger = LoggerHelper.GetLogger<MessageClientInitializer>();
+    private static MessageEntityEncoder s_messageEntityEncoder = new();
     private LoginRequest _request;
 
     public MessageClientInitializer(LoginRequest loginRequest)
