@@ -10,7 +10,7 @@ namespace IMClient;
 public class MessageClientInitializer : ChannelInitializer<ISocketChannel>
 {
     private static readonly IInternalLogger s_logger = LoggerHelper.GetLogger<MessageClientInitializer>();
-    private static MessageEntityEncoder s_messageEntityEncoder = new();
+    private static MessagePacketEncoder s_messageEntityEncoder = new();
     private LoginRequest _request;
 
     public MessageClientInitializer(LoginRequest loginRequest)
@@ -24,7 +24,7 @@ public class MessageClientInitializer : ChannelInitializer<ISocketChannel>
         pipeline.AddLast(s_messageEntityEncoder);
         pipeline.AddLast(new StringEncoder());
         pipeline.AddLast(new MessageClientLoginHandler(_request));
-        pipeline.AddLast("RequestEntityDecoder", new RequestDecoder());
+        pipeline.AddLast("RequestEntityDecoder", new MessagePacketDecoder());
         pipeline.AddLast(new ClientMessageReceiveHandler()); //Logging
     }
 }

@@ -5,15 +5,15 @@ using DotNetty.Common.Utilities;
 
 namespace IMCommon;
 
-public class ByteBufferHelper
+public class PacketHelper
 {
-    private static IInternalLogger s_logger = LoggerHelper.GetLogger<ByteBufferHelper>();
+    private static IInternalLogger s_logger = LoggerHelper.GetLogger<PacketHelper>();
     public static readonly byte CR;
     public static readonly byte LF;
     public static readonly byte[] CRLF;
     public static readonly string STR_CRLF;
 
-    static ByteBufferHelper()
+    static PacketHelper()
     {
         CR = 13;
         LF = 10;
@@ -40,5 +40,27 @@ public class ByteBufferHelper
         input.SetReaderIndex(posLF + 1);
 
         return message;
+    }
+
+    public static IByteBuffer MakeByteBuffer(MessagePacket messagePacket)
+    {
+        var message = messagePacket.MakeMessage();
+
+        // var sb = new StringBuilder();
+        // var mesageBytes = Encoding.UTF8.GetBytes(message.Header);
+        // foreach(var b in mesageBytes)
+        // {
+        //     sb.AppendFormat("{0:x2}", b);
+        // }
+
+        // s_logger.Info($"Header hex:{sb} length:{mesageBytes.Length}");
+
+        var result = ByteBufferUtil.WriteUtf8(PooledByteBufferAllocator.Default, message.Header);
+        if (message.BodyBytes != null)
+        {
+            result.WriteBytes(message.BodyBytes);
+        }
+
+        return result;
     }
 }

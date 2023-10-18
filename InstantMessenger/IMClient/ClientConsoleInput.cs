@@ -8,7 +8,7 @@ public class ClientConsoleInput
     public static ClientConsoleInput INSTANCE = new();
     public bool IsInitialized { get; private set; }
 
-    private IChannel _channel;
+    private IChannel? _channel;
 
     private ClientConsoleInput() { }
 
@@ -20,31 +20,36 @@ public class ClientConsoleInput
 
     public async Task<bool> RunAsync()
     {
+        if (_channel == null)
+        {
+            return true;
+        }
+
         var readLine = Console.ReadLine();
         if (string.IsNullOrEmpty(readLine))
         {
             return true;
         }
 
-        if (!_channel.Active)
+        if (!_channel!.Active)
         {
             return false;
         }
 
         var pos = readLine.IndexOf(":");
         var action = E_ACTION.TALK_MESSAGE;
-        var contents = readLine;
+        var body = readLine;
 
         if (pos > -1)
         {
             var actionStr = readLine[..pos];
             action = Enum.Parse<E_ACTION>(actionStr);
-            contents = readLine[(pos + 1)..];
+            body = readLine[(pos + 1)..];
         }
 
-        var request = new StringMessage.Builder(_channel)
+        var request = new MessagePacket.Builder(_channel)
             .SetAction(action)
-            .SetContents(contents)
+            .SetBody(body)
             .Build();
 
         await _channel.WriteAndFlushAsync(request);

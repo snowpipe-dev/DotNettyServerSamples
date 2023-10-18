@@ -27,7 +27,7 @@ public class MessageClientLoginHandler : ChannelHandlerAdapter
     public override void ChannelActive(IChannelHandlerContext ctx)
     {
         //login 처리
-        var requestLogin = new StringMessage.Builder(ctx)
+        var requestLogin = new MessagePacket.Builder(ctx)
                 .SetAction(E_ACTION.LOGIN)
                 .SetRefId(_loginRequest.Id)
                 .SetRefName(_loginRequest.Name)
@@ -35,7 +35,7 @@ public class MessageClientLoginHandler : ChannelHandlerAdapter
                 .SetHeader("passwd", _loginRequest.Passwd)
                 .Build();
 
-        ctx.WriteAndFlushAsync(requestLogin.ToByteBuffer()).ContinueWith(async e =>
+        ctx.WriteAndFlushAsync(PacketHelper.MakeByteBuffer(requestLogin)).ContinueWith(async e =>
             {
                 s_logger.Info("로그인됨");
                 MyLoginInfo.INSTANCE.Channel = ctx.Channel;
@@ -45,7 +45,7 @@ public class MessageClientLoginHandler : ChannelHandlerAdapter
                 MyLoginInfo.INSTANCE.Nickname = _loginRequest.Nick;
 
                 // 기본방에 대한 user list 요청
-                var requestUserList = new StringMessage.Builder(ctx)
+                var requestUserList = new MessagePacket.Builder(ctx)
                     .SetAction(E_ACTION.USER_LIST)
                     .SetRoomName(MyLoginInfo.INSTANCE.RoomName)
                     .Build();

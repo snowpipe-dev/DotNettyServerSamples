@@ -6,11 +6,11 @@ using IMCommon;
 
 namespace IMServer;
 
-public class ServerLoginProcessHandler : SimpleChannelInboundHandler<StringMessage>
+public class ServerLoginProcessHandler : SimpleChannelInboundHandler<MessagePacket>
 {
     private static readonly IInternalLogger s_logger = LoggerHelper.GetLogger<ServerLoginProcessHandler>();
 
-    protected override async void ChannelRead0(IChannelHandlerContext ctx, StringMessage message)
+    protected override async void ChannelRead0(IChannelHandlerContext ctx, MessagePacket message)
     {
         if (message.Action != E_ACTION.LOGIN)
         {
@@ -56,9 +56,9 @@ public class ServerLoginProcessHandler : SimpleChannelInboundHandler<StringMessa
         var roomList = RoomManager.INSTANCE.RoomList;
         var roomListJson = JsonSerializer.Serialize(roomList);
 
-        var response = new StringMessage.Builder()
+        var response = new MessagePacket.Builder()
             .SetAction(E_ACTION.ROOM_LIST)
-            .SetContents(roomListJson)
+            .SetBody(roomListJson)
             .Build();
 
         await ctx.WriteAndFlushAsync(response);

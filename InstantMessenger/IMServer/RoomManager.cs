@@ -38,7 +38,7 @@ public class RoomManager
 
         newRoom.Enter(channel);
 
-        var message = new StringMessage.Builder(channel)
+        var message = new MessagePacket.Builder(channel)
                 .SetAction(E_ACTION.LOGIN)
                 .Build();
         newRoom.SendMessage(message);
@@ -50,7 +50,7 @@ public class RoomManager
         if (oldInstanceRoom != null)
         {
             var userInfo = ChannelHelper.Create(channel).GetLoginUserInfo();
-            var message = new StringMessage.Builder(userInfo)
+            var message = new MessagePacket.Builder(userInfo)
                 .SetAction(E_ACTION.LOGOUT)
                 .Build();
             oldInstanceRoom.SendMessage(message);
@@ -130,14 +130,14 @@ public class RoomManager
         return newRoom;
     }
 
-    private void BroadcastMessage(StringMessage message)
+    private void BroadcastMessage(MessagePacket message)
     {
         if (_channelList.Count == 0)
         {
             return;
         }
 
-        var byteBuffer = message.ToByteBuffer();
+        var byteBuffer = PacketHelper.MakeByteBuffer(message);
         _channelList.ForEach(async e =>
         {
             if (e.Active)
@@ -153,9 +153,9 @@ public class RoomManager
     public void SendRoomList()
     {
         var jsonStr = JsonSerializer.Serialize(RoomList);
-        var response = new StringMessage.Builder()
+        var response = new MessagePacket.Builder()
             .SetAction(E_ACTION.ROOM_LIST)
-            .SetContents(jsonStr)
+            .SetBody(jsonStr)
             .Build();
         BroadcastMessage(response);
     }
@@ -169,9 +169,9 @@ public class RoomManager
             return;
         }
 
-        var message = new StringMessage.Builder(channel)
+        var message = new MessagePacket.Builder(channel)
                                 .SetAction(E_ACTION.TALK_MESSAGE)
-                                .SetContents(contents)
+                                .SetBody(contents)
                                 .Build();
         currentRoom.Talk(message);
     }

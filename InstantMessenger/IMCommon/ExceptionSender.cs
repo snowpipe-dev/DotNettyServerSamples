@@ -13,9 +13,9 @@ public class ExceptionSender
 
     public void Send(string message, bool closeChannel)
     {
-        var messageEntity = new StringMessage.Builder(_ctx)
+        var messageEntity = new MessagePacket.Builder(_ctx)
             .SetAction(E_ACTION.RESPONSE_FAIL)
-            .SetContents(message)
+            .SetBody(message)
             .Build();
 
         _ctx.WriteAndFlushAsync(messageEntity)

@@ -13,9 +13,9 @@ public class MessageServerInitializer : ChannelInitializer<ISocketChannel>
     protected override void InitChannel(ISocketChannel channel)
     {
         var pipeline = channel.Pipeline;
-        pipeline.AddLast(new MessageEntityEncoder());
+        pipeline.AddLast(new MessagePacketEncoder());
         pipeline.AddLast(new StringEncoder());
-        pipeline.AddLast("RequestEntityDecoder", new RequestDecoder());
+        pipeline.AddLast("RequestEntityDecoder", new MessagePacketDecoder());
         pipeline.AddLast(new ServerLoginProcessHandler());
         pipeline.AddLast(new MessageServerReceiveHandler());
     }

@@ -5,17 +5,16 @@ using IMCommon;
 
 namespace IMClient;
 
-public class ClientMessageReceiveHandler : SimpleChannelInboundHandler<StringMessage>
+public class ClientMessageReceiveHandler : SimpleChannelInboundHandler<MessagePacket>
 {
     private static readonly IInternalLogger s_logger = LoggerHelper.GetLogger<ClientMessageReceiveHandler>();
-    private ClientMessageProcessor _clientMessageProcessor = new();
 
     public override void ChannelInactive(IChannelHandlerContext context)
     {
         s_logger.Warn("끊김");
     }
 
-    protected override void ChannelRead0(IChannelHandlerContext context, StringMessage message)
+    protected override void ChannelRead0(IChannelHandlerContext context, MessagePacket message)
     {
         switch (message.Action)
         {
@@ -28,21 +27,21 @@ public class ClientMessageReceiveHandler : SimpleChannelInboundHandler<StringMes
                 break;
 
             case E_ACTION.ROOM_LIST:
-                var roomList = JsonSerializer.Deserialize<List<string>>(message.Contents);
+                var roomList = JsonSerializer.Deserialize<List<string>>(message.Body);
                 var roomNameStr = string.Join(",", roomList!);
                 s_logger.Info($"> [방 목록] : {roomNameStr}");
                 break;
 
             case E_ACTION.USER_LIST:
-                s_logger.Info($"> [사람들 목록] : {message.Contents}");
+                s_logger.Info($"> [사람들 목록] : {message.Body}");
                 break;
 
             case E_ACTION.TALK_MESSAGE:
-                s_logger.Info($"> [{message.RefId}] : {message.Contents}");
+                s_logger.Info($"> [{message.RefId}] : {message.Body}");
                 break;
 
             case E_ACTION.INFO_MESSAGE:
-                s_logger.Info($"> {message.Contents}");
+                s_logger.Info($"> {message.Body}");
                 break;
 
             case E_ACTION.ENTER_TO_ROOM:
@@ -54,7 +53,7 @@ public class ClientMessageReceiveHandler : SimpleChannelInboundHandler<StringMes
                 break;
 
             case E_ACTION.RESPONSE_FAIL:
-                s_logger.Warn($"[FAIL] {message.Contents}");
+                s_logger.Warn($"[FAIL] {message.Body}");
                 break;
         }
     }

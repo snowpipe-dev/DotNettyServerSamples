@@ -6,31 +6,30 @@ using DotNetty.Transport.Channels;
 
 namespace IMCommon;
 
-public enum E_STAGE
+public class MessagePacketDecoder : ByteToMessageDecoder
 {
-    HEADER = 0,
-    CONTENTS
-}
+    private static readonly IInternalLogger s_logger = LoggerHelper.GetLogger<MessagePacketDecoder>();
 
-public class RequestDecoder : ByteToMessageDecoder
-{
-    private static readonly IInternalLogger s_logger = LoggerHelper.GetLogger<RequestDecoder>();
+    enum E_DECODE_STAGE
+    {
+        HEADER = 0,
+        CONTENTS
+    }
 
-    private E_STAGE _stage = E_STAGE.HEADER;
-    private StringMessage? _requestEntity;
-    private List<string> _headerList = new();
+    private E_DECODE_STAGE _stage = E_DECODE_STAGE.HEADER;
+    private MessagePacket? _messagePacket;
+    private readonly List<string> _headerList = new();
 
     private void InitLocalVars()
     {
-        _stage = E_STAGE.HEADER;
-        _requestEntity = null;
+        _stage = E_DECODE_STAGE.HEADER;
+        _messagePacket = null;
         _headerList.Clear();
     }
 
-    private StringMessage TransformToHeader()
+    private MessagePacket TransformToHeader()
     {
-        StringMessage message = new();
-        var headLine = string.Join("", _headerList);
+        MessagePacket message = new();
 
         for (int i = 0; i < _headerList.Count; ++i)
         {
@@ -84,8 +83,8 @@ public class RequestDecoder : ByteToMessageDecoder
     {
         switch (_stage)
         {
-            case E_STAGE.HEADER:
-                var line = ByteBufferHelper.GetLine(input);
+            case E_DECODE_STAGE.HEADER:
+                var line = PacketHelper.GetLine(input);
                 if (string.IsNullOrEmpty(line))
                 {
                     return;
@@ -96,23 +95,23 @@ public class RequestDecoder : ByteToMessageDecoder
                 // 두번째 "="인 row에서 header는 끝난다.
                 if (_headerList.Count > 1 && line.Equals("="))
                 {
-                    _requestEntity = TransformToHeader();
-                    if (_requestEntity.Length == 0)
+                    _messagePacket = TransformToHeader();
+                    if (_messagePacket.Length == 0)
                     {
-                        output.Add(_requestEntity);
+                        output.Add(_messagePacket);
                         InitLocalVars();
                         return;
                     }
                     else
                     {
-                        _stage = E_STAGE.CONTENTS;
+                        _stage = E_DECODE_STAGE.CONTENTS;
                     }
                 }
 
                 break;
 
-            case E_STAGE.CONTENTS:
-                int length = _requestEntity.Length;
+            case E_DECODE_STAGE.CONTENTS:
+                int length = _messagePacket.Length;
                 if (input.ReadableBytes < length)
                 {
                     break;
@@ -121,10 +120,10 @@ public class RequestDecoder : ByteToMessageDecoder
                 var byteBuffer = Unpooled.Buffer(length);
                 input.ReadBytes(byteBuffer);
 
-                _requestEntity.SetContents(byteBuffer.ToString(Encoding.UTF8));
+                _messagePacket.SetBody(byteBuffer.ToString(Encoding.UTF8));
                 byteBuffer.Release();
 
-                output.Add(_requestEntity);
+                output.Add(_messagePacket);
                 InitLocalVars();
                 break;
         }

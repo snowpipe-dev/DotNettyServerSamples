@@ -43,7 +43,7 @@ public class InstantRoom
 
     public void SendEnterMessage(IChannel channel)
     {
-        var response = new StringMessage.Builder(channel)
+        var response = new MessagePacket.Builder(channel)
             .SetAction(E_ACTION.ENTER_TO_ROOM)
             .SetRoomName(RoomName)
             .Build();
@@ -53,7 +53,7 @@ public class InstantRoom
 
     public void SendExitMessage(IChannel channel)
     {
-        var response = new StringMessage.Builder(channel)
+        var response = new MessagePacket.Builder(channel)
                     .SetAction(E_ACTION.EXIT_FROM_ROOM)
                     .SetRoomName(RoomName)
                     .Build();
@@ -70,19 +70,19 @@ public class InstantRoom
         }
     }
 
-    public void Talk(StringMessage message)
+    public void Talk(MessagePacket message)
     {
         SendMessage(message);
     }
 
-    public void SendMessage(StringMessage message)
+    public void SendMessage(MessagePacket message)
     {
         if (_channelList.Count == 0)
         {
             return;
         }
 
-        var byteBuffer = message.ToByteBuffer();
+        var byteBuffer = PacketHelper.MakeByteBuffer(message);
         _channelList.ForEach(async e =>
         {
             if (e.Active)
